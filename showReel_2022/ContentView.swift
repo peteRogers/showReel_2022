@@ -15,27 +15,30 @@ struct ContentView: View {
     @StateObject private var viewModel = ViewModel()
     var body: some View {
         Text("\($viewModel.playlist.vids.count)")
-        List(viewModel.playlist.vids){ j in
+//        List(viewModel.playlist.vids){ j in
            
-            
-                    VStack(alignment: .leading) {
-                        
-                        Text(j.name)
-                            .font(.title)
-                            .fontWeight(.heavy)
-                            .foregroundColor(Color.gray)
-                            
-                        HStack{
-                            Text("\(j.name)")
-                                .font(.title3)
-                                .foregroundColor(Color.red)
-                                
-                            Spacer()
-                            Text("\(j.name)")
-                                .font(.title3)
-                        }
-                    }
-    }
+//
+//                    VStack(alignment: .leading) {
+//
+//                        Text(j.name)
+//                            .font(.title)
+//                            .fontWeight(.heavy)
+//                            .foregroundColor(Color.gray)
+//
+//                        HStack{
+//                            Text("\(j.name)")
+//                                .font(.title3)
+//                                .foregroundColor(Color.red)
+//
+//                            Spacer()
+//                            Text("\(j.name)")
+//                                .font(.title3)
+//                        }
+//                    }
+   // }
+        PlayerView(player: viewModel.playingItem).onAppear(){
+           
+        }
     }
 }
 
