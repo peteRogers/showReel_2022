@@ -6,6 +6,7 @@
 //
 
 import SwiftUI
+import AVFoundation
 
 
 
@@ -13,6 +14,7 @@ import SwiftUI
 
 struct ContentView: View {
     @StateObject private var viewModel = ViewModel()
+   
     var body: some View {
         Text("\($viewModel.playlist.vids.count)")
 //        List(viewModel.playlist.vids){ j in
@@ -36,9 +38,14 @@ struct ContentView: View {
 //                        }
 //                    }
    // }
-        PlayerView(player: viewModel.playingItem).onAppear(){
-           
+        if(viewModel.currentStatus == .paused){
+            PlayerView(player: viewModel.player).opacity(0.1)
         }
+        if(viewModel.currentStatus == .playing){
+            
+            PlayerView(player: viewModel.player)
+        }
+    
     }
 }
 

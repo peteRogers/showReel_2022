@@ -7,26 +7,82 @@
 
 import Foundation
 import AVFoundation
-import SwiftUI
+import Combine
+
 extension ContentView {
     
     @MainActor class ViewModel: ObservableObject {
-        @Published var playingItem = AVPlayer()
+        let player = AVPlayer()
         @Published var playlist = PlayList()
+        @Published var currentStatus = PlayerStatus.notLoaded
+        private var itemObservation: AnyCancellable?
         
         init(){
-            if let av = playlist.vids[0].item{
-                playingItem.replaceCurrentItem(with: AVPlayerItem(asset:av))
-                playItem()
+            loadNext()
+          //  playItem()
+            
+//            itemObservation = player.publisher(for: \.timeControlStatus).sink { newStatus in
+//                if(newStatus == .paused){
+//                    print("item paused")
+//                    self.currentStatus = .paused
+//                }
+//                if(newStatus == .playing){
+//                    self.currentStatus = .playing
+//                    print("item playing")
+//                }
+//
+//
+//            }
+
+           
+           
+        }
+        
+        func loadNext(){
+            if let av = self.playlist.vids[0].item{
+               
+                player.replaceCurrentItem(with: AVPlayerItem(asset:av))
+                let _ = Timer.scheduledTimer(withTimeInterval: 10, repeats:false) { timer in
+                    print("Timer fired!")
+                    self.playItem()
+                }
+                
             }
         }
         
         func playItem(){
-            playingItem.play()
+           
+            player.play()
+            itemObservation = player.publisher(for: \.timeControlStatus).sink { newStatus in
+                print(newStatus.rawValue)
+                
+                if(newStatus == .paused){
+                    print("item paused")
+                    self.currentStatus = .paused
+                   
+                    self.itemObservation?.cancel()
+                    self.loadNext()
+                }
+                if(newStatus == .playing){
+                    self.currentStatus = .playing
+                    print("item playing")
+                   
+                }
+                
+               
+            }
+            
+          
             
         }
     }
 }
+
+enum PlayerStatus{
+    
+    case playing, paused, loading, notLoaded
+}
+
 
 
 

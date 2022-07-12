@@ -22,8 +22,8 @@ class PlayerUIView: UIView{
     init(player: AVPlayer) {
             self.player = player
             super.init(frame: .zero)
-            self.backgroundColor = .black
-            // player.isMuted = true // just in case
+            self.backgroundColor = .blue
+            player.isMuted = true // just in case
             playerLayer.player = player
             playerLayer.videoGravity = .resizeAspectFill
             layer.addSublayer(playerLayer)
@@ -39,6 +39,20 @@ class PlayerUIView: UIView{
             
             
         }
+    
+    override func layoutSubviews() {
+       // print("from layout")
+        super.layoutSubviews()
+        playerLayer.frame = bounds
+        playerLayer.videoGravity = .resizeAspect
+//       // print(playerLayer.videoRect.size)
+//        tv.font = UIFont(name: "HelveticaNeue-Bold" , size: bounds.height * 0.05)
+//        tv.frame = CGRect(origin: CGPoint(x: bounds.width * 0.09, y: bounds.height - (bounds.height * 0.45)), size: CGSize(width: bounds.width, height: bounds.height * 0.06))
+//        nv.font = UIFont(name: "HelveticaNeue-Light" , size: bounds.height * 0.04)
+//        nv.frame = CGRect(origin: CGPoint(x: bounds.width * 0.09, y: bounds.height - (bounds.height * 0.38)), size: CGSize(width: bounds.width, height: bounds.height * 0.05))
+//       // NSCursor.hide()
+//       // print(bounds)
+    }
     
 }
 

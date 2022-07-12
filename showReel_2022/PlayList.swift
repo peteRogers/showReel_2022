@@ -12,7 +12,7 @@ import SwiftUI
 @MainActor class PlayList: ObservableObject{
     
     @Published var vids = [VidInfo]()
-    @Published var currentVid = AVPlayer()
+   
     
     init(){
         do{
