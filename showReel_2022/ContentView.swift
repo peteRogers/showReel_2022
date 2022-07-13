@@ -8,44 +8,34 @@
 import SwiftUI
 import AVFoundation
 
-
-
-
-
 struct ContentView: View {
     @StateObject private var viewModel = ViewModel()
-   
-    var body: some View {
-        Text("\($viewModel.playlist.vids.count)")
-//        List(viewModel.playlist.vids){ j in
-           
-//
-//                    VStack(alignment: .leading) {
-//
-//                        Text(j.name)
-//                            .font(.title)
-//                            .fontWeight(.heavy)
-//                            .foregroundColor(Color.gray)
-//
-//                        HStack{
-//                            Text("\(j.name)")
-//                                .font(.title3)
-//                                .foregroundColor(Color.red)
-//
-//                            Spacer()
-//                            Text("\(j.name)")
-//                                .font(.title3)
-//                        }
-//                    }
-   // }
-        if(viewModel.currentStatus == .paused){
-            PlayerView(player: viewModel.player).opacity(0.1)
-        }
-        if(viewModel.currentStatus == .playing){
-            
-            PlayerView(player: viewModel.player)
-        }
+    @State private var animate = false
     
+    var body: some View {
+        if(viewModel.currentStatus == .playing){
+            PlayerView(player: viewModel.player).transition(.asymmetric(insertion: .opacity.animation(.easeInOut(duration: 0.5)),
+                                                                        removal: .opacity.animation(.easeInOut(duration: 0.1))))
+        }else{
+            ZStack{
+                Rectangle().fill(.black)
+                VStack{
+                    Text("\(viewModel.playlist.vids[0].title)" as String)
+                        .font(.largeTitle)
+                        .fontWeight(.heavy)
+                        .foregroundColor(.white)
+                        .frame(maxWidth: .infinity, alignment: .leading)
+                        .padding(.leading, 100)
+                        .padding(.bottom, 20)
+                Text("\(viewModel.playlist.vids[0].name)" as String)
+                        .font(.title)
+                        .foregroundColor(.white)
+                        .frame(maxWidth: .infinity, alignment: .leading)
+                        .padding(.leading, 100)
+                }
+            }.transition(.asymmetric(insertion: .opacity.animation(.easeInOut(duration: 0.1)),
+                                     removal: .opacity.animation(.easeInOut(duration: 1))))
+        }
     }
 }
 

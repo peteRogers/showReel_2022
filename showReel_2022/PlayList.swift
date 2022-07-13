@@ -13,7 +13,6 @@ import SwiftUI
     
     @Published var vids = [VidInfo]()
    
-    
     init(){
         do{
             let json = try loadData(name: "vids")
@@ -29,6 +28,17 @@ import SwiftUI
         }catch{
             print("unexpected error")
         }
+    }
+    
+    func deliverAsset() throws -> AVAsset{
+        guard let v = vids[0].item else{
+            throw ArrayError.noItem
+        }
+        return v
+    }
+    
+    func arrangeArray(){
+        vids.move(from:0, to: vids.endIndex - 1)
     }
     
     func loadData(name:String) throws -> [JSONIN]{
@@ -66,30 +76,6 @@ import SwiftUI
         }
         return asset
     }
-    
-    
-    
-    //    private func getVideoAsset(filename: String, completion:  @escaping (AVAsset) -> ()){
-    //
-    //        let fileUrl = Bundle.main.url(forResource: filename, withExtension: nil)
-    //        let asset = AVAsset(url: fileUrl!)
-    //        let keys = ["duration"]
-    //        asset.loadValuesAsynchronously(forKeys: keys){
-    //            var error: NSError? = nil
-    //            let status = asset.statusOfValue(forKey: "duration", error: &error)
-    //            switch status{
-    //            case .loaded:
-    //                print("loaded")
-    //                completion(asset)
-    //                break
-    //            default:
-    //                print("whaaat")
-    //                break
-    //            }
-    //        }
-    //    }
-    
-    
 }
 
 struct JSONIN: Codable {
@@ -112,3 +98,24 @@ enum JSONError: Error, Equatable {
     case jsonError
 }
 
+enum ArrayError: Error{
+    case noItem
+}
+
+
+extension Array where Element: Equatable
+{
+    mutating func move(_ element: Element, to newIndex: Index) {
+        if let oldIndex: Int = self.firstIndex(of: element) { self.move(from: oldIndex, to: newIndex) }
+    }
+}
+
+extension Array
+{
+    mutating func move(from oldIndex: Index, to newIndex: Index) {
+
+        if oldIndex == newIndex { return }
+        if abs(newIndex - oldIndex) == 1 { return self.swapAt(oldIndex, newIndex) }
+        self.insert(self.remove(at: oldIndex), at: newIndex)
+    }
+}

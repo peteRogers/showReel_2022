@@ -8,6 +8,7 @@
 import Foundation
 import AVFoundation
 import Combine
+import UIKit
 
 extension ContentView {
     
@@ -19,67 +20,41 @@ extension ContentView {
         
         init(){
             loadNext()
-          //  playItem()
-            
-//            itemObservation = player.publisher(for: \.timeControlStatus).sink { newStatus in
-//                if(newStatus == .paused){
-//                    print("item paused")
-//                    self.currentStatus = .paused
-//                }
-//                if(newStatus == .playing){
-//                    self.currentStatus = .playing
-//                    print("item playing")
-//                }
-//
-//
-//            }
-
-           
-           
         }
         
         func loadNext(){
-            if let av = self.playlist.vids[0].item{
-               
+            do{
+                let av = try playlist.deliverAsset()
+                playlist.arrangeArray()
                 player.replaceCurrentItem(with: AVPlayerItem(asset:av))
-                let _ = Timer.scheduledTimer(withTimeInterval: 10, repeats:false) { timer in
-                    print("Timer fired!")
+                NSCursor.unhide()
+                let _ = Timer.scheduledTimer(withTimeInterval: 2, repeats:false) { timer in
                     self.playItem()
                 }
-                
+            }catch ArrayError.noItem{
+                print("no item in array")
+            }catch{
+                print("unknown error")
             }
         }
         
         func playItem(){
-           
             player.play()
             itemObservation = player.publisher(for: \.timeControlStatus).sink { newStatus in
-                print(newStatus.rawValue)
-                
                 if(newStatus == .paused){
-                    print("item paused")
                     self.currentStatus = .paused
-                   
                     self.itemObservation?.cancel()
                     self.loadNext()
                 }
                 if(newStatus == .playing){
                     self.currentStatus = .playing
-                    print("item playing")
-                   
                 }
-                
-               
             }
-            
-          
-            
         }
     }
 }
 
 enum PlayerStatus{
-    
     case playing, paused, loading, notLoaded
 }
 
